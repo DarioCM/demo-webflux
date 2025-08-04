@@ -22,4 +22,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     return savedEmployee.map(EmployeeMapper::mapToDto);
 
   }
+
+  @Override
+  public Mono<EmployeeDto> getEmployee(String employeeId) {
+
+    Mono<Employee> employee = repository.findById(employeeId);
+    return employee.map(EmployeeMapper::mapToDto);
+
+  }
 }
