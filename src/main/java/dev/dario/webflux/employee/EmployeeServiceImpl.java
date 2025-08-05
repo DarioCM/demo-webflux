@@ -1,6 +1,7 @@
 package dev.dario.webflux.employee;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
@@ -28,6 +29,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     Mono<Employee> employee = repository.findById(employeeId);
     return employee.map(EmployeeMapper::mapToDto);
+
+  }
+
+  @Override
+  public Flux<EmployeeDto> getAllEmployees() {
+
+    Flux<Employee> listFlux = repository.findAll();
+    return listFlux
+                    .map(EmployeeMapper::mapToDto)
+                    .switchIfEmpty(Flux.empty());
 
   }
 }
