@@ -1,6 +1,7 @@
 package dev.dario.webflux.employee;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,9 +46,14 @@ public class EmployeeController {
   @PutMapping("{id}")
   public Mono<EmployeeDto> updateEmployee(@RequestBody EmployeeDto dto,
                                           @PathVariable("id") String employeeId){
-
     return employeeService.updateEmployee(dto, employeeId);
+  }
 
+  // build reactive delete employee REST api
+  @DeleteMapping("{id}")
+  @ResponseStatus(value = HttpStatus.NO_CONTENT)
+  public Mono<Void> deleteEmployee(@PathVariable("id") String employeeId) {
+    return employeeService.deleteEmployee(employeeId);
   }
 
 
