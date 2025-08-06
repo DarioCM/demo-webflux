@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -40,6 +41,14 @@ public class EmployeeController {
     return employeeService.getAllEmployees();
   }
 
+  // build reactive update employee rest api
+  @PutMapping("{id}")
+  public Mono<EmployeeDto> updateEmployee(@RequestBody EmployeeDto dto,
+                                          @PathVariable("id") String employeeId){
+
+    return employeeService.updateEmployee(dto, employeeId);
+
+  }
 
 
 
