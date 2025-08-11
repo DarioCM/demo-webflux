@@ -1,6 +1,7 @@
 package dev.dario.webflux.employee;
 
 
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -52,6 +53,33 @@ class EmployeeControllerTest {
         .jsonPath("$.firstName").isEqualTo(employeeDto.getFirstName())
         .jsonPath("$.lastName").isEqualTo(employeeDto.getLastName());
 
+  }
+
+  @Test
+  void givenEmployeeId_whenGetEmployee_thenReturnEmloyeeObject() {
+    // given - pre-conditions
+    String employeeId = "123";
+
+    EmployeeDto employeeDto = new EmployeeDto();
+    employeeDto.setEmail("dario@gmail.com");
+    employeeDto.setFirstName("dario");
+    employeeDto.setLastName("casta");
+
+    BDDMockito.given(employeeService.getEmployee(employeeId)).willReturn(Mono.just(employeeDto));
+
+    // when - action
+    WebTestClient.ResponseSpec responseSpec =
+        webTestClient.get()
+            .uri("/api/employees/{id}", Collections.singletonMap("id", employeeId))
+            .exchange();
+
+    // then - verify - output
+    responseSpec.expectStatus().isOk()
+        .expectBody()
+        .consumeWith(System.out::println)
+        .jsonPath("$.firstName").isEqualTo(employeeDto.getFirstName())
+        .jsonPath("$.lastName").isEqualTo(employeeDto.getLastName())
+        .jsonPath("$.email").isEqualTo(employeeDto.getEmail());
   }
 
 
