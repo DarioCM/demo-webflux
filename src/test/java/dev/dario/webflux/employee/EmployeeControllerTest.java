@@ -1,7 +1,9 @@
 package dev.dario.webflux.employee;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @ExtendWith(SpringExtension.class)
@@ -80,6 +83,41 @@ class EmployeeControllerTest {
         .jsonPath("$.firstName").isEqualTo(employeeDto.getFirstName())
         .jsonPath("$.lastName").isEqualTo(employeeDto.getLastName())
         .jsonPath("$.email").isEqualTo(employeeDto.getEmail());
+  }
+
+  //get all employees
+  @Test
+  void givenListOfEmployees_whenGetAllEmployees_returnListOfEmployees() {
+    //given - pre conditions
+    List<EmployeeDto> list = new ArrayList<>();
+    EmployeeDto employeeDto1 = new EmployeeDto();
+    employeeDto1.setEmail("dario@gmail.com");
+    employeeDto1.setFirstName("dario");
+    employeeDto1.setLastName("casta");
+    list.add(employeeDto1);
+    EmployeeDto employeeDto2 = new EmployeeDto();
+    employeeDto2.setEmail("carlos@gmail.com");
+    employeeDto2.setFirstName("carlos");
+    employeeDto2.setLastName("casta");
+    list.add(employeeDto2);
+
+    Flux<EmployeeDto> employeeDtoFlux = Flux.fromIterable(list);
+
+    BDDMockito.given(employeeService.getAllEmployees()).willReturn(employeeDtoFlux);
+
+    //when - action or behaviour
+    WebTestClient.ResponseSpec responseSpec =
+        webTestClient.get().uri("/api/employees")
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange();
+
+    //then - verify
+    responseSpec.expectStatus().isOk()
+        .expectBodyList(EmployeeDto.class)
+        .consumeWith(System.out::println);
+
+
+
   }
 
 
