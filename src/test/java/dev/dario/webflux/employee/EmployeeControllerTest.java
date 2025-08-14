@@ -153,5 +153,25 @@ class EmployeeControllerTest {
 
   }
 
+  @Test
+  void givenEmployeeId_whenDeleteEmployee_thenReturnNothing(){
+    // given - pre conditions
+    String employeeId = "123";
+    Mono<Void> voidMono = Mono.empty();
+    BDDMockito.given(employeeService.deleteEmployee(employeeId))
+        .willReturn(voidMono);
+    // when - action or behaviour
+    WebTestClient.ResponseSpec response =
+        webTestClient.delete()
+            .uri("/api/employees/{id}", Collections.singletonMap("id", employeeId))
+            .exchange();
+    // then - verify the output
+    response.expectStatus().isNoContent()
+        .expectBody()
+        .consumeWith(System.out::println);
+
+
+  }
+
 
 }
